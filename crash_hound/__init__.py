@@ -54,13 +54,15 @@ class CrashHound:
                     check_data['check_fn']()
                 except ReportCrash, e:
                     if self._should_send_notification(check_data):
-                        self._send_notification(check_name, check_data, str(e))
-
+                        self._send_notification(check_name, str(e))
                         check_data['last_notifcation'] = datetime.utcnow()
+                except:
+                    self._send_notification(check_name, 'Crash checker crashed!')
+                    raise
             time.sleep(check_interval)
 
     #--- Private ----------------------------------------------
-    def _send_notification(self, name, check_data, crash_message):
+    def _send_notification(self, name, crash_message):
         notifo.send_notification(
             self.api_user,
             self.api_token,
