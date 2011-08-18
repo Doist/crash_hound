@@ -6,8 +6,9 @@ Crash Hound lets you script monitoring and lets you receive notifications direct
 It works via Tropo and a http://tropo.com acocunt is required.
 
 For more information check out:
-* http://amix.dk/blog/post/19637#Monitor-anything-and-get-SMS-notifications
-* http://amix.dk/blog/post/19625#International-SMS-messaging-The-cheap-way
+
+ * http://amix.dk/blog/post/19637#Monitor-anything-and-get-SMS-notifications
+ * http://amix.dk/blog/post/19625#International-SMS-messaging-The-cheap-way
     
 To install it do following:
 
