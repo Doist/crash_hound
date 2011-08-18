@@ -1,19 +1,61 @@
 import time
 import urllib
-import notifo
 
 from datetime import datetime, timedelta
 
 
-class ReportCrash(Exception): pass
-
-
-class CrashHound:
+#--- Message senders ----------------------------------------------
+class SenderNotifo:
 
     def __init__(self, api_user, api_token):
-        self.check_functions = {}
         self.api_user = api_user
         self.api_token = api_token
+
+    def send_notification(self, name, crash_message):
+        import notifo
+        return notifo.send_notification(
+            self.api_user,
+            self.api_token,
+            to=self.api_user,
+            title=name,
+            msg=crash_message,
+            label='CrashHound'
+        )
+
+
+class SenderTropo:
+
+    def __init__(self, api_token, number):
+        self.api_token = api_token
+        self.number = number
+
+    def send_notification(self, name, crash_message):
+        data = urllib.urlencode({
+            'action': 'create',
+            'token': self.api_token,
+            'numberToDial': self.number.replace(' ', ''),
+            'msg': '%s: %s' % (name, crash_message)
+        })
+
+        fp = urllib.urlopen('https://api.tropo.com/1.0/sessions',
+                            data)
+
+        return fp.read()
+
+
+
+#--- Exceptions ----------------------------------------------
+class ReportCrash(Exception):
+    pass
+
+
+
+#--- Impl ----------------------------------------------
+class CrashHound:
+
+    def __init__(self, sender):
+        self.check_functions = {}
+        self.sender = sender
 
     #--- Registers ----------------------------------------------
     def register_check(self, name, check_fn, notify_every=240):
@@ -63,14 +105,10 @@ class CrashHound:
 
     #--- Private ----------------------------------------------
     def _send_notification(self, name, crash_message):
-        notifo.send_notification(
-            self.api_user,
-            self.api_token,
-            to=self.api_user,
-            title=name,
-            msg=crash_message,
-            label='CrashHound'
-        )
+        status = self.sender.send_notification(name, crash_message)
+        print 'Sending error report [%s] %s' % (name, crash_message)
+        print 'Status: %s' % status
+        print '--------'
 
     def _should_send_notification(self, check_data):
         last_notifcation = check_data.get('last_notifcation')

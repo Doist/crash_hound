@@ -6,13 +6,11 @@
 # your option) any later version.
 
 import os
-import ez_setup
-ez_setup.use_setuptools()
 
 from setuptools import setup
 
 setup(name='crash_hound',
-      version = '1.0',
+      version = '1.2',
       author="amix",
       author_email="amix@amix.dk",
       url="http://www.amix.dk/",
