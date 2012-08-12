@@ -43,6 +43,62 @@ class SenderTropo:
         return fp.read()
 
 
+class SenderMail:
+    """Send mail notifications using a specified SMTP server."""
+    
+    def __init__(self, mail_to, mail_from, smtp_host, smtp_user, smtp_password, smtp_port=587, tls=True):
+        """Construct mail notification sender class.
+
+        `mail_to` the email address (or list of email addresses) to send the notification to.
+        `mail_from` the email address that the notification should be sent from.
+        `smtp_host` the IP address or hostname of the SMTP server.
+        `smtp_user` the user to authenticate the SMTP connection with.
+        `smtp_password` the password to authenticate the SMTP connection with.
+        `smtp_port` the port number of the SMTP server (defaults to 587).
+        `tls` specifies if TLS must be used to encrypt the connection (defaults to True).
+        """
+        if (isinstance(mail_to, str)):
+            self.mail_to = (mail_to,)
+        else:
+            self.mail_to = mail_to
+        self.mail_from = mail_from
+        self.smtp_host = smtp_host
+        self.smtp_user = smtp_user
+        self.smtp_password = smtp_password
+        self.smtp_port = smtp_port
+        self.use_tls = tls
+
+    def send_notification(self, name, crash_message):
+        """Send an mail notification about a crash event.
+
+        `name` the name of the crash checker that initiated the notificaton.
+        `crash_message` the message from the crash error.
+        """
+        from smtplib import SMTP
+        from email.MIMEText import MIMEText
+
+        # build message
+        message = MIMEText(crash_message, 'plain')
+        message['Subject'] = name
+        message['To'] = ','.join(self.mail_to)
+        message['From'] = self.mail_from
+
+        # connect to SMTP server and send message
+        connection = SMTP(self.smtp_host, self.smtp_port)
+        connection.ehlo()
+        if self.use_tls:
+            # put SMTP connection into TLS mode so that further commands are encrypted
+            connection.starttls()
+            connection.ehlo()
+        connection.login(self.smtp_user, self.smtp_password)
+        try:
+            connection.sendmail(self.mail_from, self.mail_to, message.as_string())
+            return True # success
+        except:
+            return False # failure
+        finally:
+            connection.quit()
+
 
 #--- Exceptions ----------------------------------------------
 class ReportCrash(Exception):
