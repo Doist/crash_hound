@@ -43,3 +43,18 @@ Example of list wrapper:
                                  notify_every=60)
 
     crash_checker.run_checks(check_interval=10)
+
+Example of email notifications using the [SendGrid](http://sendgrid.com) SMTP sever:
+
+    from crash_hound import CrashHound, CommonChecks, SenderMail
+	
+    #--- Configure sender and checker ----------------------------------------------
+    crash_sender = SenderMail('EMAIL TO', 'EMAIL FROM', 'smtp.sendgrid.net', 'SENDGRID USER', 'SENDGRID PASSWORD')
+	
+    crash_checker = CrashHound(crash_sender)
+	
+    crash_checker.register_check('Google.com Blah test',
+                                 lambda: CommonChecks.website_check('http://google.com/blah'),
+                                 notify_every=60)
+	
+    crash_checker.run_checks(check_interval=10)
