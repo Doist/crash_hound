@@ -10,12 +10,12 @@ import os
 from setuptools import setup
 
 setup(name='crash_hound',
-      version = '2.0',
+      version = '2.2',
       author="amix",
       author_email="amix@amix.dk",
       url="http://www.amix.dk/",
       classifiers=[
-        "Development Status :: 5 - Stable",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
@@ -36,8 +36,9 @@ Crash Hound lets you script monitoring and lets you receive notifications direct
 It works via Tropo and a http://tropo.com acocunt is required.
 
 For more information check out:
-* http://amix.dk/blog/post/19637#Monitor-anything-and-get-SMS-notifications
-* http://amix.dk/blog/post/19625#International-SMS-messaging-The-cheap-way
+
+ * http://amix.dk/blog/post/19637#Monitor-anything-and-get-SMS-notifications
+ * http://amix.dk/blog/post/19625#International-SMS-messaging-The-cheap-way
 
 To install it do following:
 

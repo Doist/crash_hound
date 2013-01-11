@@ -1,46 +1,38 @@
 import time
+import types
 import urllib
 
 from datetime import datetime, timedelta
 
 
 #--- Message senders ----------------------------------------------
-class SenderNotifo:
-
-    def __init__(self, api_user, api_token):
-        self.api_user = api_user
-        self.api_token = api_token
-
-    def send_notification(self, name, crash_message):
-        import notifo
-        return notifo.send_notification(
-            self.api_user,
-            self.api_token,
-            to=self.api_user,
-            title=name,
-            msg=crash_message,
-            label='CrashHound'
-        )
-
-
 class SenderTropo:
 
-    def __init__(self, api_token, number):
+    def __init__(self, api_token, numbers):
         self.api_token = api_token
-        self.number = number
+
+        if type(numbers) != types.ListType:
+            numbers = [numbers]
+
+        self.numbers = numbers
 
     def send_notification(self, name, crash_message):
-        data = urllib.urlencode({
-            'action': 'create',
-            'token': self.api_token,
-            'numberToDial': self.number.replace(' ', ''),
-            'msg': '%s: %s' % (name, crash_message)
-        })
+        statuses = []
 
-        fp = urllib.urlopen('https://api.tropo.com/1.0/sessions',
-                            data)
+        for number in self.numbers:
+            data = urllib.urlencode({
+                'action': 'create',
+                'token': self.api_token,
+                'numberToDial': number.replace(' ', ''),
+                'msg': '%s: %s' % (name, crash_message)
+            })
 
-        return fp.read()
+            fp = urllib.urlopen('https://api.tropo.com/1.0/sessions',
+                                data)
+
+            statuses.append( fp.read() )
+
+        return '  '.join(statuses)
 
 
 class SenderMail:

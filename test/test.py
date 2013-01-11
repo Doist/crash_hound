@@ -1,4 +1,4 @@
-from crash_hound import CrashHound, ReportCrash, CommonChecks
+from crash_hound import CrashHound, ReportCrash, CommonChecks, SenderTropo
 
 def check_fn():
     if 42:
@@ -7,8 +7,11 @@ def check_fn():
         pass #Ignore
 
 
-crash_checker = CrashHound(YOUR_USERNAME,
-                           YOUR_API_TOKEN)
+#--- Configure sender and checker ----------------------------------------------
+crash_sender = SenderTropo('YOUR TROPO.COM API KEY',
+                           '+56 ... YOUR MOBILE NUMBER ...')
+
+crash_checker = CrashHound(crash_sender)
 
 crash_checker.register_check('42 Checker',
                              check_fn,
